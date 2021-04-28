@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import UserLogin from './components/UserLogin';
 import index from './components/index';
 import userList from './components/UserList'
+import myInfo from './components/My';
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,11 @@ const routes = [
         path: "/userList",
         mame: "userList",
         component : userList
+    },
+    {
+        path: '/my',
+        name: 'my',
+        component: myInfo
     }
 ]
 

@@ -1,6 +1,6 @@
 <template>
     <div id="da">
-        <el-button type="primary" icon="el-icon-search">搜索</el-button>
+        <el-button type="primary" @click="loadUserList" icon="el-icon-search">搜索</el-button>
         <el-table
       :data="tableData"
       style="width: 100%">
@@ -32,9 +32,14 @@ export default {
     },
     methods: {
         loadUserList(){
-            this.$axios.get("user/getUsers").then(function(res) {
-                if(res != null){
-                    this.tableData = res;
+            var me = this;
+            this.$axios({
+                method: 'get',
+                url: '/user/getUsers'
+            }).then(function(res) { 
+                if(res.data.code == '666'){
+                    debugger
+                    me.tableData = res.data.responseEntity;
                 }else{
                     alert("error");
                 }

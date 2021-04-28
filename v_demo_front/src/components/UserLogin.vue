@@ -62,15 +62,21 @@
     methods: {
       submitForm(formName) {
         var me = this;
-        debugger
           var userParam = [];
           userParam.name = this.userForm.name;
           userParam.password =  this.userForm.password;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$axios.get("/user/userLogin",userParam).then(function (res) {
-                if(res.code == '666'){
-                    me.$router.push('/userList');
+            this.$axios({
+              url: '/user/userLogin',
+              method: 'get',
+              params: {
+                name: userParam.name,
+                password: userParam.password
+              }
+            }).then(function (res) {
+                if(res.data.code == '666'){
+                    me.$router.push('/index');
                 } else{
                     alert("信息错误");
                 }
