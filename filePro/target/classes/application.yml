@@ -1,9 +1,0 @@
-server:
-  port: 8090
-
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: Deng2021
-    url: jdbc:mysql://bj-cynosdbmysql-grp-lj12merc.sql.tencentcdb.com:22989/project?serverTimezone=UTC
