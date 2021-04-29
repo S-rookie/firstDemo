@@ -2,7 +2,7 @@ module.exports = {
     devServer: {  
       proxy: {  
         '/api': {  
-        target: 'http://locahost:8080', // 后台请求地址  
+        target: 'http://82.157.174.148:8080', // 后台请求地址  
         ws: true,  
         changeOrigin: true,  
         pathRewrite: {  
@@ -10,5 +10,7 @@ module.exports = {
         }  
       }  
      }  
-    } 
+    } ,
+    publicPath: "./",
+    productionSourceMap: false
     }

@@ -17,7 +17,7 @@ public class FtpTest {
      */
     @Test
     public void uploadFile() throws FileNotFoundException {
-        String path = "C:/Users/邓/Desktop/man.txt";
+        String path = "C:/Users/eshore/Desktop/hello.txt";
         FileInputStream inputStream = new FileInputStream(new File(path));
         boolean b = FtpUtil.uploadFile("82.157.174.148", 21, "fu", "fu", "/var/ftp/test", "/2021", "man.txt", inputStream);
         System.out.println(b);
