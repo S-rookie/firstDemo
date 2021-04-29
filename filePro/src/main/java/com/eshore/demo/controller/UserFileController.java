@@ -4,6 +4,7 @@ import com.eshore.demo.common.FtpUtil;
 import com.eshore.demo.common.ResultJson;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,5 +36,11 @@ public class UserFileController {
         return rs;
     }
 
+    @PostMapping("/uploadFiles")
+    public ResultJson uploadFiles(HttpServletRequest request){
+//        request.geth
+        System.out.println();
+        return null;
+    }
 
 }

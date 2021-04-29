@@ -6,7 +6,8 @@ import router from './router';
 import axios from 'axios';
 
 Vue.prototype.$axios = axios;
-axios.defaults.baseURL= 'http://localhost:8090'
+// axios.defaults.baseURL= 'http://82.157.174.148:8090'
+axios.defaults.baseURL= 'http://127.0.0.1:8090'
 
 Vue.use(ElementUI)
 

@@ -4,7 +4,7 @@
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        :action="this.$axios.defaults.baseURL+'/file/uploadFiles'"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :file-list="fileList"
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -56,6 +57,9 @@ export default {
     };
   },
   methods: {
+    uploadUrl(){
+      return this.$axios.defaults.baseURL+"/file/uploadFiles"
+    },
     downFile(index, row) {
       alert("下载", index, row);
     },
@@ -63,11 +67,11 @@ export default {
       alert("上传文件", index, row);
     },
     submitUpload() {
-      debugger
-      this.$refs.upload.submit();
+     this.$refs.upload.submit();
+     
     },
     handlePreview(file) {
-      console.log(file);
+      console.log(file); 
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
