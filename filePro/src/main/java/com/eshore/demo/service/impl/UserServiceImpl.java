@@ -24,26 +24,24 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
 
     @Override
-    public ResultJson userLogin(String name , String password) {
+    public User userLogin(String name , String password) {
         ResultJson rs = new ResultJson();
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("name",name);
         wrapper.eq("password",password);
         List<User> users = userMapper.selectList(wrapper);
-        if (users.size() != 0){
-            rs.setCode(ResultJson.SUCCESS_CODE);
-            String s = JSONArray.toJSONString(users);
-            rs.setResponseEntity(s);
-        } else {
-            rs.setCode(ResultJson.ERROR_CODE);
+        if (users != null){
+            return users.get(0);
+        }else {
+            return null;
         }
-        return rs;
     }
 
     @Override
     public ResultJson queryUsers() {
         ResultJson rs = new ResultJson();
         List<User> users = userMapper.selectList(null);
+        JSONArray.parseArray(JSONArray.toJSONString(users));
         if (users != null){
             rs.setCode(ResultJson.SUCCESS_CODE);
             rs.setResponseEntity(users);

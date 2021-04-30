@@ -1,6 +1,8 @@
 package com.eshore.demo.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.eshore.demo.common.ResultJson;
+import com.eshore.demo.entity.User;
 import com.eshore.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,16 +24,22 @@ public class UserController {
     @GetMapping("/userLogin")
     @ResponseBody
     public ResultJson userLogin(HttpServletRequest request){
+        ResultJson rs = new ResultJson();
         String name = request.getParameter("name");
         String password = request.getParameter("password");
-        ResultJson resultJson = userService.userLogin(name, password);
-        return resultJson;
+        User user = userService.userLogin(name, password);
+        if (user != null){
+            rs.setCode(ResultJson.SUCCESS_CODE);
+            rs.setResponseEntity(JSON.toJSON(user));
+            request.setAttribute("loginUser",user);
+        }
+        return rs;
     }
 
     @GetMapping("/getUsers")
     @ResponseBody
     public ResultJson getUsers(){
-        System.out.println("getusers");
+        userService.queryUsers();
         return userService.queryUsers();
     }
 }

@@ -7,3 +7,21 @@ spring:
     username: root
     password: Deng2021
     url: jdbc:mysql://bj-cynosdbmysql-grp-lj12merc.sql.tencentcdb.com:22989/project?serverTimezone=UTC
+
+
+logging:
+  file:
+    path: log-demo.log
+  level:
+    com.eshore: debug
+
+
+#ftpFileMap:
+# host= 82.157.174.148
+# port= 21
+# username= fu
+# password= fu
+# basePath= /var/ftp/test
+# filePath= /2021
+
+

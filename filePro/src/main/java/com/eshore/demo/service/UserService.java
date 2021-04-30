@@ -1,6 +1,7 @@
 package com.eshore.demo.service;
 
 import com.eshore.demo.common.ResultJson;
+import com.eshore.demo.entity.User;
 
 /**
  * @author eshore
@@ -13,7 +14,7 @@ public interface UserService {
      * @param password
      * @return
      */
-    public ResultJson userLogin(String name , String password);
+    public User userLogin(String name , String password);
 
     /**
      * 查询所有

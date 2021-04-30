@@ -3,6 +3,11 @@ package com.eshore.demo.common;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -11,9 +16,18 @@ import java.io.InputStream;
 /**
  * @author eshore
  */
+
 public class FtpUtil {
+
+    public static String host = "82.157.174.148";
+    public static String port = "21";
+    public static String username = "fu";
+    public static String password = "fu";
+    public static String basePath = "/var/ftp/test";
+    public static String filePath = "/2021";
+
+
     /**
-     *
      * @param host
      * @param port
      * @param username
@@ -39,7 +53,7 @@ public class FtpUtil {
                 return result;
             }
             //切换到上传目录
-            if (!ftp.changeWorkingDirectory(basePath+filePath)) {
+            if (!ftp.changeWorkingDirectory(basePath + filePath)) {
                 //如果目录不存在创建目录
                 String[] dirs = filePath.split("/");
                 String tempPath = basePath;
@@ -58,9 +72,9 @@ public class FtpUtil {
                 }
             }
             //为了加大上传文件速度，将InputStream转成BufferInputStream
-            BufferedInputStream in=new BufferedInputStream(input);
+            BufferedInputStream in = new BufferedInputStream(input);
             //加大缓存区
-            ftp.setBufferSize(1024*1024);
+            ftp.setBufferSize(1024 * 1024);
             //设置上传文件的类型为二进制类型
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
             //上传文件
