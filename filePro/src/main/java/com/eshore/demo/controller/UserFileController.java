@@ -107,11 +107,12 @@ public class UserFileController {
 
     @PostMapping("/downloadFiles")
     @ResponseBody
-    public ResultJson downloadFiles(HttpServletRequest request){
+    public ResultJson downloadFiles(HttpServletRequest request,HttpServletResponse response){
         String row = request.getParameter("row");
         JSONObject jsonObject = JSON.parseObject(row);
         String originalName = (String) jsonObject.get("originalName");
         ResultJson resultJson = fileService.downloadFiles(originalName);
-        return null;
+//        response.getWriter().print();
+        return resultJson;
     }
 }

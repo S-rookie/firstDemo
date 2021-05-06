@@ -41,7 +41,7 @@
       <el-table-column prop="fileType" label="类型"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <a size="mini" :href='"/file/downloadFiles"'>下载</a>
+          <el-button size="mini" @click="downFile(scope.$index, scope.row)">下载</el-button>
           <el-button size="mini" type="danger" @click="deleteFile(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -69,7 +69,13 @@ export default {
         params: {
           row: row
         },
-      })
+        responseType: 'blob'
+      }).then(res=>{
+        debugger
+       const blob = new Blob([res.data],{type:"text/plain"})
+        const url = window.URL.createObjectURL(blob)
+        window.location.href = url
+      }).catch(error => this.$message.error(error) )
     },
     deleteFile(index, row) {
       alert("上传文件", index, row);

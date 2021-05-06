@@ -1,9 +1,11 @@
 package com.eshore.demo.common;
 
+import java.io.Serializable;
+
 /**
  * @author eshore
  */
-public class ResultJson {
+public class ResultJson implements Serializable {
 
     private String code;
     private Object responseEntity;

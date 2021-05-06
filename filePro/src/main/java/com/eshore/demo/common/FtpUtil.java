@@ -92,7 +92,8 @@ public class FtpUtil {
         return result;
     }
 
-    public static boolean downloadFileByFtp(String fileName) {
+    public static OutputStream downloadFileByFtp(String fileName) {
+        OutputStream outputStream = null;
         FTPClient ftp = new FTPClient();
         try {
             int reply;
@@ -101,27 +102,29 @@ public class FtpUtil {
             reply = ftp.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftp.disconnect();
-                return false;
+                return null;
             }
             if (!ftp.changeWorkingDirectory(basePath+filePath)){
                 LoggerFactory.getLogger(FtpUtil.class).info("连接失败，ftp目录不存在!");
-                return false;
+                return null;
             }
             ftp.enterLocalPassiveMode();
             String[] fs = ftp.listNames();
-            String savePath = "E:/google_dowmload/"+fileName;
+//            String savePath = "E:/google_dowmload/"+fileName;
             for (String ff: fs
                  ) {
                 if (ff.equals(fileName)){
-                    File file = new File(savePath);
-                    try (OutputStream os = new FileOutputStream(file)) {
-                        ftp.retrieveFile(ff,os);
-                    }
+                    outputStream = ftp.storeFileStream(ff);
+//                    File file = new File(savePath);
+//                    try (OutputStream os = new FileOutputStream()) {
+//                        ftp.appendFileStream()
+////                        ftp.retrieveFile(ff,os);
+//                    }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         } finally {
             if (ftp.isConnected()) {
                 try {
@@ -130,7 +133,7 @@ public class FtpUtil {
                 }
             }
         }
-        return true;
+        return outputStream;
     }
 
 }
