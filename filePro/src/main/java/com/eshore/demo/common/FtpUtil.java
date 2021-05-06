@@ -3,15 +3,17 @@ package com.eshore.demo.common;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.mybatis.logging.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.logging.LogFile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.SocketException;
 
 /**
  * @author eshore
@@ -28,23 +30,16 @@ public class FtpUtil {
 
 
     /**
-     * @param host
-     * @param port
-     * @param username
-     * @param password
-     * @param basePath
-     * @param filePath
      * @param filename
      * @param input
      * @return
      */
-    public static boolean uploadFile(String host, int port, String username, String password, String basePath,
-                                     String filePath, String filename, InputStream input) {
+    public static boolean uploadFile(String filename, InputStream input) {
         boolean result = false;
         FTPClient ftp = new FTPClient();
         try {
             int reply;
-            ftp.connect(host, port);// 连接FTP服务器
+            ftp.connect(host, Integer.parseInt(port));// 连接FTP服务器
             // 如果采用默认端口，可以使用ftp.connect(host)的方式直接连接FTP服务器
             ftp.login(username, password);// 登录
             reply = ftp.getReplyCode();
@@ -95,6 +90,47 @@ public class FtpUtil {
             }
         }
         return result;
+    }
+
+    public static boolean downloadFileByFtp(String fileName) {
+        FTPClient ftp = new FTPClient();
+        try {
+            int reply;
+            ftp.connect(host, Integer.parseInt(port));
+            ftp.login(username, password);
+            reply = ftp.getReplyCode();
+            if (!FTPReply.isPositiveCompletion(reply)) {
+                ftp.disconnect();
+                return false;
+            }
+            if (!ftp.changeWorkingDirectory(basePath+filePath)){
+                LoggerFactory.getLogger(FtpUtil.class).info("连接失败，ftp目录不存在!");
+                return false;
+            }
+            ftp.enterLocalPassiveMode();
+            String[] fs = ftp.listNames();
+            String savePath = "E:/google_dowmload/"+fileName;
+            for (String ff: fs
+                 ) {
+                if (ff.equals(fileName)){
+                    File file = new File(savePath);
+                    try (OutputStream os = new FileOutputStream(file)) {
+                        ftp.retrieveFile(ff,os);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (ftp.isConnected()) {
+                try {
+                    ftp.disconnect();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        return true;
     }
 
 }

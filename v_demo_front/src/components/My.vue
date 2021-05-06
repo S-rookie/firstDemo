@@ -41,7 +41,7 @@
       <el-table-column prop="fileType" label="类型"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button size="mini" @click="downFile(scope.$index, scope.row)">下载</el-button>
+          <a size="mini" :href='"/file/downloadFiles"'>下载</a>
           <el-button size="mini" type="danger" @click="deleteFile(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -63,7 +63,13 @@ export default {
       return this.$axios.defaults.baseURL+"/file/uploadFiles"
     },
     downFile(index, row) {
-      alert("下载", index, row);
+      this.$axios({
+        url: '/file/downloadFiles',
+        method: 'post',
+        params: {
+          row: row
+        },
+      })
     },
     deleteFile(index, row) {
       alert("上传文件", index, row);

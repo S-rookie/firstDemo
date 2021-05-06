@@ -10,9 +10,11 @@ import com.eshore.demo.common.ResultJson;
 import com.eshore.demo.entity.User;
 import com.eshore.demo.entity.UserFiles;
 import com.eshore.demo.mapper.FilerMapper;
+import com.eshore.demo.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.transform.Result;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,12 +40,17 @@ public class UserFileController {
     @Autowired
     FilerMapper filerMapper;
 
+    @Autowired
+    FileService fileService;
+
     @GetMapping("/searchFiles")
     @ResponseBody
     public ResultJson searchFiles(HttpServletRequest request){
         ResultJson rs = new ResultJson();
         User loginUser = (User)request.getAttribute("loginUser");
 //        request.getParameter("userId");
+        loginUser = new User();
+        loginUser.setId("1");
         QueryWrapper<UserFiles> wrapper = new QueryWrapper();
         wrapper.eq("user_id",loginUser.getId());
         List<UserFiles> userFiles = filerMapper.selectList(wrapper);
@@ -65,7 +73,7 @@ public class UserFileController {
          */
         fileMap.forEach((k, v) -> {
             try {
-                boolean uploadSuccess = FtpUtil.uploadFile(FtpUtil.host, Integer.parseInt(FtpUtil.port), FtpUtil.username, FtpUtil.password, FtpUtil.basePath, FtpUtil.filePath, v.getOriginalFilename(), v.getInputStream());
+                boolean uploadSuccess = FtpUtil.uploadFile(v.getOriginalFilename(), v.getInputStream());
                 if (uploadSuccess) {
                     /**
                      * 把文件信息存入数据库
@@ -95,5 +103,15 @@ public class UserFileController {
             }
         });
         return rs;
+    }
+
+    @PostMapping("/downloadFiles")
+    @ResponseBody
+    public ResultJson downloadFiles(HttpServletRequest request){
+        String row = request.getParameter("row");
+        JSONObject jsonObject = JSON.parseObject(row);
+        String originalName = (String) jsonObject.get("originalName");
+        ResultJson resultJson = fileService.downloadFiles(originalName);
+        return null;
     }
 }
