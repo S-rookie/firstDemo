@@ -21,6 +21,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 System.out.println("cross");
                 registry.addMapping("/**")
+                        // 跨域访问导致session每次不同,设置可以接受cookie信息(默认false)
                         .allowCredentials(false)
                         .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
                         .allowedOrigins("*");

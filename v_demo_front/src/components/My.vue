@@ -1,10 +1,11 @@
 <template>
   <div>
-  <div>
+    <div>
       <el-upload
         class="upload-demo"
         ref="upload"
         :action="this.$axios.defaults.baseURL+'/file/uploadFiles'"
+        :data="userInfo"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :file-list="fileList"
@@ -24,15 +25,14 @@
         <!-- <template #tip>
           <div class="el-upload__tip">只能上传 jpg/png 文件，且不超过 500kb</div>
         </template>-->
-         <el-button
-            @click="searchFiles"
-            style="margin-left: 10px;"
-            size="small"
-            type="primary"
-            icon="el-icon-search"
-          >搜索</el-button>
+        <el-button
+          @click="searchFiles"
+          style="margin-left: 10px;"
+          size="small"
+          type="primary"
+          icon="el-icon-search"
+        >搜索</el-button>
       </el-upload>
-      
     </div>
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="createDate" label="日期" width="180"></el-table-column>
@@ -50,32 +50,45 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
       tableData: [],
-      fileList: []
+      fileList: [],
+      userInfo: JSON.parse(sessionStorage.getItem("user"))
     };
   },
   methods: {
-    uploadUrl(){
-      return this.$axios.defaults.baseURL+"/file/uploadFiles"
+    uploadUrl() {
+      return this.$axios.defaults.baseURL + "/file/uploadFiles";
     },
     downFile(index, row) {
       this.$axios({
-        url: '/file/downloadFiles',
-        method: 'post',
+        url: "/file/downloadFiles",
+        method: "post",
         params: {
           row: row
-        },
-        responseType: 'blob'
-      }).then(res=>{
-        debugger
-       const blob = new Blob([res.data],{type:"text/plain"})
-        const url = window.URL.createObjectURL(blob)
-        window.location.href = url
-      }).catch(error => this.$message.error(error) )
+        }
+      })
+        .then(res => {
+          const blob = this.dataURItoBlob(res.data.responseEntity);
+          // const blob = new Blob([res.data], { type: "text/plain" });
+          let downloadElement = document.createElement("a");
+          let href = window.URL.createObjectURL(blob);
+          downloadElement.href = href;
+          downloadElement.download = "fileName";
+          document.body.appendChild(downloadElement);
+          // 点击下载
+          downloadElement.click();
+          // 下载完成移除元素
+          document.body.removeChild(downloadElement);
+          // 释放掉blob对象
+          window.URL.revokeObjectURL(href);
+
+          // const url = window.URL.createObjectURL(blob)
+          // window.location.href = url
+        })
+        .catch(error => this.$message.error(error));
     },
     deleteFile(index, row) {
       alert("上传文件", index, row);
@@ -88,10 +101,10 @@ export default {
       //     type: 'warning'
       //   })
       // }
-     this.$refs.upload.submit()
+      this.$refs.upload.submit();
     },
     handlePreview(file) {
-      console.log(file); 
+      console.log(file);
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
@@ -105,31 +118,35 @@ export default {
         url: "/file/searchFiles",
         params: [{ userId }]
       }).then(function(res) {
-         me.tableData = res.data.responseEntity;
-         console.log(me.tableData)
+        me.tableData = res.data.responseEntity;
+        console.log(me.tableData);
       });
     },
     // 上传成功调用
-    handleSuccess(res){
-      if(res.code == '666'){
+    handleSuccess(res) {
+      if (res.code == "666") {
         this.$message({
-          message: '上传成功',
-          type: 'success'
-        })
-      }else{
+          message: "上传成功",
+          type: "success"
+        });
+      } else {
         this.$message({
-          message: 'error',
-          type: 'error'
-        })
+          message: "error",
+          type: "error"
+        });
       }
     },
-    handleError(){
+    handleError() {
       this.$message({
-          message: '上传失败',
-          type: 'error'
-        })
-      }
-    
-  },
-}
+        message: "上传失败",
+        type: "error"
+      });
+    },
+    dataURItoBlob(base64Data) {
+      let Base64 = require('js-base64').Base64;
+      let u8arr = Base64.decode(base64Data);
+      return new Blob([u8arr], { type: "text/plain" });
+    }
+  }
+};
 </script>

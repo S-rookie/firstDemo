@@ -59,10 +59,16 @@ public class UserFileController {
         return rs;
     }
 
+    /**
+     * 上传文件有中文名称会乱码
+     * @param request
+     * @return
+     */
     @PostMapping("/uploadFiles")
     @ResponseBody
     public ResultJson uploadFiles(HttpServletRequest request) {
         ResultJson rs = new ResultJson();
+        String userId = request.getParameter("id");
         /**
          * 先上传，上传成功把文件信息存入数据库
          */
@@ -85,8 +91,7 @@ public class UserFileController {
                     file.setFileType(v.getContentType());
                     file.setCreateDate(new Date());
                     file.setFileId(System.currentTimeMillis() + "");
-                    User loginUser = (User)request.getAttribute("loginUser");
-                    file.setUserId(loginUser.getId());
+                    file.setUserId(userId);
                     int insert = filerMapper.insert(file);
                     if (insert > 0) {
                         rs.setCode(ResultJson.SUCCESS_CODE);
@@ -112,7 +117,6 @@ public class UserFileController {
         JSONObject jsonObject = JSON.parseObject(row);
         String originalName = (String) jsonObject.get("originalName");
         ResultJson resultJson = fileService.downloadFiles(originalName);
-//        response.getWriter().print();
         return resultJson;
     }
 }

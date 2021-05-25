@@ -1,9 +1,14 @@
 package com.eshore.demo.common;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.extra.ftp.Ftp;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
-import org.mybatis.logging.Logger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,6 +16,8 @@ import org.springframework.boot.logging.LogFile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import sun.misc.IOUtils;
+import sun.nio.ch.IOUtil;
 
 import java.io.*;
 import java.net.SocketException;
@@ -38,6 +45,9 @@ public class FtpUtil {
         boolean result = false;
         FTPClient ftp = new FTPClient();
         try {
+            ftp.setControlEncoding("GBK");
+            FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
+            conf.setServerLanguageCode("zh");
             int reply;
             ftp.connect(host, Integer.parseInt(port));// 连接FTP服务器
             // 如果采用默认端口，可以使用ftp.connect(host)的方式直接连接FTP服务器
@@ -92,8 +102,9 @@ public class FtpUtil {
         return result;
     }
 
-    public static OutputStream downloadFileByFtp(String fileName) {
-        OutputStream outputStream = null;
+    public static java.io.ByteArrayOutputStream downloadFileByFtp(String fileName) {
+        Logger logger = LoggerFactory.getLogger(FtpUtil.class);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FTPClient ftp = new FTPClient();
         try {
             int reply;
@@ -114,12 +125,8 @@ public class FtpUtil {
             for (String ff: fs
                  ) {
                 if (ff.equals(fileName)){
-                    outputStream = ftp.storeFileStream(ff);
-//                    File file = new File(savePath);
-//                    try (OutputStream os = new FileOutputStream()) {
-//                        ftp.appendFileStream()
-////                        ftp.retrieveFile(ff,os);
-//                    }
+                    ftp.retrieveFile(ff,baos);
+                    byte[] bytes = baos.toByteArray();
                 }
             }
         } catch (IOException e) {
@@ -133,7 +140,7 @@ public class FtpUtil {
                 }
             }
         }
-        return outputStream;
+        return baos;
     }
 
 }
