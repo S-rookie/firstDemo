@@ -34,8 +34,11 @@
         >搜索</el-button>
       </el-upload>
     </div>
-    <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="createDate" label="日期" width="180"></el-table-column>
+    <el-table 
+    :data="tableData" 
+    stripe style="width: 100%"
+    >
+      <el-table-column prop="createDate" :formatter="dateTimeFormat" label="上传日期" width="180"></el-table-column>
       <el-table-column prop="originalName" label="文件名" width="180"></el-table-column>
       <el-table-column prop="fileSize" label="大小"></el-table-column>
       <el-table-column prop="fileType" label="类型"></el-table-column>
@@ -72,11 +75,10 @@ export default {
       })
         .then(res => {
           const blob = this.dataURItoBlob(res.data.responseEntity);
-          // const blob = new Blob([res.data], { type: "text/plain" });
           let downloadElement = document.createElement("a");
           let href = window.URL.createObjectURL(blob);
           downloadElement.href = href;
-          downloadElement.download = "fileName";
+          downloadElement.download = row.originalName;
           document.body.appendChild(downloadElement);
           // 点击下载
           downloadElement.click();
@@ -91,16 +93,42 @@ export default {
         .catch(error => this.$message.error(error));
     },
     deleteFile(index, row) {
-      alert("上传文件", index, row);
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$axios({
+            url: "/file/deleteFiles",
+            method: "post",
+            params: {
+              row: row
+            }
+          }).then(res => {
+            debugger;
+            if (res.data.code === "666") {
+              this.$message({
+                type: "success",
+                message: "删除成功！"
+              });
+              this.searchFiles();
+            }else{
+              this.$message({
+                type: "error",
+                message: "删除失败！"
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     submitUpload() {
-      // 提交的时候怎么获取到文件列表？
-      // if(fileList.length == 0){
-      //  return this.$message({
-      //     message: '还没有选择文件',
-      //     type: 'warning'
-      //   })
-      // }
       this.$refs.upload.submit();
     },
     handlePreview(file) {
@@ -129,6 +157,7 @@ export default {
           message: "上传成功",
           type: "success"
         });
+        this.searchFiles();
       } else {
         this.$message({
           message: "error",
@@ -143,10 +172,14 @@ export default {
       });
     },
     dataURItoBlob(base64Data) {
-      let Base64 = require('js-base64').Base64;
+      let Base64 = require("js-base64").Base64;
       let u8arr = Base64.decode(base64Data);
       return new Blob([u8arr], { type: "text/plain" });
-    }
+    },
+    dateTimeFormat(row, column) {
+      var t = new Date(row.createDate);
+      return t.getFullYear() + "-" + t.getMonth() + "-" + t.getDate();
+    },
   }
 };
 </script>

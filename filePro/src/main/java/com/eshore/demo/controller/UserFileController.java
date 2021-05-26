@@ -112,11 +112,28 @@ public class UserFileController {
 
     @PostMapping("/downloadFiles")
     @ResponseBody
-    public ResultJson downloadFiles(HttpServletRequest request,HttpServletResponse response){
+    public ResultJson downloadFiles(HttpServletRequest request){
         String row = request.getParameter("row");
         JSONObject jsonObject = JSON.parseObject(row);
         String originalName = (String) jsonObject.get("originalName");
         ResultJson resultJson = fileService.downloadFiles(originalName);
+        return resultJson;
+    }
+
+    @PostMapping("/deleteFiles")
+    @ResponseBody
+    public ResultJson deleteFiles(HttpServletRequest request){
+        ResultJson resultJson = new ResultJson();
+        String row = request.getParameter("row");
+        JSONObject rowJson = JSONObject.parseObject(row);
+        String fileId = (String)rowJson.get("fileId");
+        int result = fileService.delFilesById(fileId);
+        if (result > 0) {
+            resultJson.setCode(ResultJson.SUCCESS_CODE);
+        } else {
+            resultJson.setCode(ResultJson.ERROR_CODE);
+        }
+        resultJson.setResponseEntity(result);
         return resultJson;
     }
 }

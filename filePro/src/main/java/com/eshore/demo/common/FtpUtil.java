@@ -45,9 +45,7 @@ public class FtpUtil {
         boolean result = false;
         FTPClient ftp = new FTPClient();
         try {
-            ftp.setControlEncoding("GBK");
-            FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
-            conf.setServerLanguageCode("zh");
+            ftp.setControlEncoding("UTF-8");
             int reply;
             ftp.connect(host, Integer.parseInt(port));// 连接FTP服务器
             // 如果采用默认端口，可以使用ftp.connect(host)的方式直接连接FTP服务器
@@ -67,6 +65,7 @@ public class FtpUtil {
                         continue;
                     }
                     tempPath += "/" + dir;
+                    tempPath = new String(tempPath.getBytes("GBK"),"iso-8859-1");
                     if (!ftp.changeWorkingDirectory(tempPath)) {
                         if (!ftp.makeDirectory(tempPath)) {
                             return result;
@@ -83,6 +82,9 @@ public class FtpUtil {
             //设置上传文件的类型为二进制类型
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
             //上传文件
+//            if (!ftp.storeFile(new String(filename.getBytes("GBK"),"iso-8859-1"), in)) {
+//                return result;
+//            }
             if (!ftp.storeFile(filename, in)) {
                 return result;
             }

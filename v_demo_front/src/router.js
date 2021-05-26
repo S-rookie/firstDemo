@@ -4,6 +4,7 @@ import UserLogin from "./components/UserLogin";
 import index from "./components/index";
 import userList from "./components/UserList";
 import myInfo from "./components/My";
+import mList from "./components/m"
 
 Vue.use(VueRouter);
 
@@ -31,6 +32,11 @@ const routes = [
     path: "/my",
     name: "my",
     component: myInfo,
+  },
+  {
+    path: "/mList",
+    name: "mList",
+    component: mList,
   },
 ];
 

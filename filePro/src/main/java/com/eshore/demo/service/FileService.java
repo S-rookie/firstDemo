@@ -7,4 +7,6 @@ import com.eshore.demo.common.ResultJson;
  */
 public interface FileService {
     public ResultJson downloadFiles(String fileName);
+
+    public int delFilesById(String file_id);
 }
