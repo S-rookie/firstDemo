@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/mp3/**").addResourceLocations("E:/mp3/");
+        System.out.println("mp3");
+        registry.addResourceHandler("/mp3/**").addResourceLocations("file:E:/mp3/");
     }
 }

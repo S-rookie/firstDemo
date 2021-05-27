@@ -39,7 +39,6 @@ public class UserController {
             rs.setCode(ResultJson.SUCCESS_CODE);
             rs.setResponseEntity(JSON.toJSON(user));
             Cookie[] cookies = request.getCookies();
-//            session.
             if (request.getSession(true).getAttribute("loginUser") == null) {
                 request.getSession(true).setAttribute("loginUser", user);
             }
